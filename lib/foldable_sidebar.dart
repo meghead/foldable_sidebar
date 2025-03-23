@@ -9,11 +9,11 @@ enum FSBStatus {
 
 class FoldableSidebarBuilder extends StatelessWidget {
   final FSBStatus status;
-  final Color drawerBackgroundColor;
+  final Color? drawerBackgroundColor;
   final Widget drawer;
   final Widget screenContents;
 
-  const FoldableSidebarBuilder({Key key, @required this.status, @required this.drawer, @required this.screenContents, this.drawerBackgroundColor}) : super(key: key);
+  const FoldableSidebarBuilder({Key? key, required this.status, required this.drawer, required this.screenContents, this.drawerBackgroundColor}) : super(key: key);
 
   Tween<double> getTween() {
     switch (status) {
@@ -21,8 +21,6 @@ class FoldableSidebarBuilder extends StatelessWidget {
         return Tween<double>(begin: 0.0, end: 1.0);
       case FSBStatus.FSB_CLOSE:
         return Tween<double>(begin: 1.0, end: 0.0);
-      default:
-        return Tween<double>(begin: 0.0, end: 0.0);
     }
   }
 
@@ -32,13 +30,13 @@ class FoldableSidebarBuilder extends StatelessWidget {
       return TweenAnimationBuilder<double>(
           curve: Curves.fastOutSlowIn,
           tween: getTween(),
-          duration: Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 700),
           builder: (context, data, child) {
             final double drawerWidth = constraints.maxWidth * 0.60 * data;
             final double portionAngle = 1.57 * (1 - data);
             final double perspective = 0.007 * (1 - data);
-            final height = constraints.maxHeight;
-            final Widget drawerContainer = Container(
+            final double height = constraints.maxHeight;
+            final Widget drawerContainer = SizedBox(
               height: height,
               child: drawer,
             );
@@ -52,7 +50,7 @@ class FoldableSidebarBuilder extends StatelessWidget {
                   children: <Widget>[
                     Stack(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: drawerWidth,
                           height: height,
                         ),
@@ -88,23 +86,22 @@ class FoldableSidebarBuilder extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (data == 1.0) ...[drawerContainer],
-                        if (data != 1.0) ...[
+                        if (data == 1.0) drawerContainer,
+                        if (data != 1.0)
                           Positioned(
                               top: height * 0.25,
                               left: drawerWidth / 2,
                               child: Opacity(
                                 opacity: 1-data,
                                 child: Container(
-                                  decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black, blurRadius: 10)]),
+                                  decoration: const BoxDecoration(boxShadow: [BoxShadow(color: Colors.black, blurRadius: 10)]),
                                   width: 2,
                                   height: height * 0.75,
                                 ),
                               )),
-                        ]
                       ],
                     ),
-                    Container(
+                    SizedBox(
                       width: constraints.maxWidth,
                       height: height,
                       child: screenContents,
